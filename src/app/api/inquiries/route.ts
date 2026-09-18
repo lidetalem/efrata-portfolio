@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb, schema } from "@/db";
+import { eq } from "drizzle-orm";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { sanitizeText } from "@/lib/utils";
 import { storeFile } from "@/lib/storage";
@@ -120,5 +121,18 @@ export async function POST(request: Request) {
     profile?.email
   );
 
-  return NextResponse.json({ ok: true, id: saved.id, warning: mail.warning });
+  if (mail.warning) {
+    await db
+      .update(schema.inquiries)
+      .set({ notes: `[Email notification failed] ${mail.warning}` })
+      .where(eq(schema.inquiries.id, saved.id));
+  }
+
+  return NextResponse.json({
+    ok: true,
+    id: saved.id,
+    warning: mail.warning
+      ? "Your message was received. (Note: the email notification to Efrata didn't go through, but your request is saved and she'll see it in her dashboard.)"
+      : undefined,
+  });
 }

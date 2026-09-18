@@ -16,6 +16,7 @@ export function VideoPlayer({
   label: string;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const playPromiseRef = useRef<Promise<void> | null>(null);
   const [started, setStarted] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -51,9 +52,14 @@ export function VideoPlayer({
     try {
       if (video.paused) {
         setStarted(true);
-        await video.play();
+        const promise = video.play();
+        playPromiseRef.current = promise;
+        await promise;
         setPlaying(true);
       } else {
+        if (playPromiseRef.current) {
+          await playPromiseRef.current.catch(() => {});
+        }
         video.pause();
         setPlaying(false);
       }
