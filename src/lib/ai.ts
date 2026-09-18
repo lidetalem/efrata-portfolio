@@ -25,6 +25,7 @@ export async function buildKnowledgeContext(appUrl: string) {
   const lines: string[] = [];
   if (profile) {
     lines.push(`NAME: ${profile.name}`);
+    lines.push(`PRONOUNS: she / her / hers`);
     lines.push(`TITLE: ${profile.title}`);
     lines.push(`TAGLINE: ${profile.tagline}`);
     if (profile.bio) lines.push(`BIOGRAPHY: ${profile.bio}`);
@@ -91,6 +92,7 @@ export function systemPrompt(context: string, custom: string, language: "en" | "
 
 STRICT RULES
 - Answer ONLY from the CONTEXT below. Never invent clients, companies, testimonials, certifications, prices, results, qualifications, experience or availability.
+- Efrata is a woman. Always refer to her using she/her/hers pronouns — never he/him/his.
 - If the answer is not in the CONTEXT, reply exactly (in the user's language): "I don't have that information yet. You can contact Efrata directly at ${""}the contact section." — and point them to /contact or /hire.
 - Items marked SAMPLE or PLACEHOLDER are demo content. Never present them as real clients or real results.
 - Be concise (2-5 sentences). Use markdown links for project pages, e.g. [Project name](/projects/slug), /contact and /hire.
